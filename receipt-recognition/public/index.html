@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Veryfi Receipt OCR Demo</title>
+  </head>
+  <body>
+    <h1>Receipt Scanner Demo</h1>
+
+    <!-- Updated input -->
+    <input
+      type="file"
+      id="receiptInput"
+      accept="image/*"
+      capture="environment"
+    />
+
+    <button id="uploadBtn">Scan Receipt</button>
+    <pre id="resultArea">Result will appear here...</pre>
+
+    <script>
+      const receiptInput = document.getElementById('receiptInput');
+      const uploadBtn = document.getElementById('uploadBtn');
+      const resultArea = document.getElementById('resultArea');
+      let selectedFile = null;
+
+      receiptInput.addEventListener('change', () => {
+        if (receiptInput.files && receiptInput.files[0]) {
+          selectedFile = receiptInput.files[0];
+        }
+      });
+
+      uploadBtn.addEventListener('click', async () => {
+        if (!selectedFile) {
+          alert("Please choose or capture a receipt image first!");
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append('receipt', selectedFile);
+
+        try {
+          const res = await fetch('/api/scan-receipt', {
+            method: 'POST',
+            body: formData
+          });
+          if (!res.ok) {
+            throw new Error(`Server error: ${res.statusText}`);
+          }
+          const data = await res.json();
+          resultArea.textContent = JSON.stringify(data, null, 2);
+        } catch (err) {
+          console.error(err);
+          resultArea.textContent = `Error: ${err.message}`;
+        }
+      });
+    </script>
+  </body>
+</html>
