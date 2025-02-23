@@ -1,58 +1,54 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>Veryfi Receipt OCR Demo</title>
-  </head>
-  <body>
-    <h1>Receipt Scanner Demo</h1>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receipt Scanner</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
 
-    <!-- Updated input -->
-    <input
-      type="file"
-      id="receiptInput"
-      accept="image/*"
-      capture="environment"
-    />
+</head>
+<body>
 
-    <button id="uploadBtn">Scan Receipt</button>
-    <pre id="resultArea">Result will appear here...</pre>
+    <!-- Upload Screen -->
+    <div id="uploadScreen" class="screen">
+        <div class="container">
+            <h1>RIPE</h1>
+            <p>Upload a receipt to extract produce details.</p>
 
-    <script>
-      const receiptInput = document.getElementById('receiptInput');
-      const uploadBtn = document.getElementById('uploadBtn');
-      const resultArea = document.getElementById('resultArea');
-      let selectedFile = null;
+            <!-- Hidden File Input -->
+            <input type="file" id="receiptInput" accept="image/*" capture="environment" class="hidden">
 
-      receiptInput.addEventListener('change', () => {
-        if (receiptInput.files && receiptInput.files[0]) {
-          selectedFile = receiptInput.files[0];
-        }
-      });
+            <!-- Button to Trigger Upload -->
+            <button id="uploadBtn">📷 Take Photo</button>
+        </div>
+    </div>
 
-      uploadBtn.addEventListener('click', async () => {
-        if (!selectedFile) {
-          alert("Please choose or capture a receipt image first!");
-          return;
-        }
+    <!-- Processing Screen -->
+    <div id="processingScreen" class="screen hidden">
+        <div class="processing-container">
+            <div class="spinner"></div>
+            <p>Processing...</p>
+        </div>
+    </div>
 
-        const formData = new FormData();
-        formData.append('receipt', selectedFile);
+   <!-- Receipt Details Screen -->
+<div id="receiptDetailsScreen" class="screen hidden">
+    <div class="container">
+        <h2>Receipt Details</h2>
+        <p><strong></strong> <span id="storeName">-</span></p>
+        <p><strong></strong> <span id="receiptDate">-</span></p>
 
-        try {
-          const res = await fetch('/api/scan-receipt', {
-            method: 'POST',
-            body: formData
-          });
-          if (!res.ok) {
-            throw new Error(`Server error: ${res.statusText}`);
-          }
-          const data = await res.json();
-          resultArea.textContent = JSON.stringify(data, null, 2);
-        } catch (err) {
-          console.error(err);
-          resultArea.textContent = `Error: ${err.message}`;
-        }
-      });
-    </script>
-  </body>
+        <h3>Produce Items</h3>
+        <p id="produceList"></p>
+
+        <!-- Add to Fridge Button -->
+        <button id="addToFridgeBtn">+ Add to Fridge</button>
+    </div>
+</div>
+
+    <script src="script.js"></script>
+</body>
 </html>
